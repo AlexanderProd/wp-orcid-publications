@@ -40,6 +40,26 @@ function orcid_publications_register_block() {
             'orcid' => array(
                 'type' => 'string',
                 'default' => ''
+            ),
+            'titleTag' => array(
+                'type' => 'string',
+                'default' => 'h3'
+            ),
+            'fontSize' => array(
+                'type' => 'number',
+                'default' => 16
+            ),
+            'showYear' => array(
+                'type' => 'boolean',
+                'default' => true
+            ),
+            'showType' => array(
+                'type' => 'boolean',
+                'default' => true
+            ),
+            'layout' => array(
+                'type' => 'string',
+                'default' => 'list'
             )
         )
     ));
@@ -47,6 +67,11 @@ function orcid_publications_register_block() {
 
 function display_orcid_publications($attributes) {
     $orcid = $attributes['orcid'] ?? '';
+    $title_tag = $attributes['titleTag'] ?? 'h3';
+    $font_size = $attributes['fontSize'] ?? 16;
+    $show_year = $attributes['showYear'] ?? true;
+    $show_type = $attributes['showType'] ?? true;
+    $layout = $attributes['layout'] ?? 'list';
     
     if (empty($orcid)) {
         return '<p>Please provide an ORCID ID</p>';
@@ -106,25 +131,54 @@ function display_orcid_publications($attributes) {
         set_transient($cache_key, $publications, 12 * HOUR_IN_SECONDS);
     }
 
-    // Generate HTML output
-    $output = '<div class="orcid-publications">';
+    // Generate HTML output with dynamic classes and styles
+    $wrapper_class = 'wp-block-orcid-publications';
+    $wrapper_class .= ' is-layout-' . esc_attr($layout);
+    
+    $style = sprintf(
+        'style="--publication-font-size: %dpx;"',
+        esc_attr($font_size)
+    );
+
+    $output = sprintf('<div class="%s" %s>', $wrapper_class, $style);
     
     foreach ($publications as $pub) {
-        $output .= '<div class="publication">';
+        $output .= '<div class="wp-block-orcid-publications__item">';
+        
+        // Title with dynamic tag
         if (!empty($pub['url'])) {
-            $output .= '<h3><a href="' . esc_url($pub['url']) . '" target="_blank">' . 
-                      esc_html($pub['title']) . '</a></h3>';
+            $output .= sprintf('<%1$s class="wp-block-orcid-publications__title"><a href="%2$s" target="_blank">%3$s</a></%1$s>',
+                esc_attr($title_tag),
+                esc_url($pub['url']),
+                esc_html($pub['title'])
+            );
         } else {
-            $output .= '<h3>' . esc_html($pub['title']) . '</h3>';
+            $output .= sprintf('<%1$s class="wp-block-orcid-publications__title">%2$s</%1$s>',
+                esc_attr($title_tag),
+                esc_html($pub['title'])
+            );
         }
-        $output .= '<p>';
-        if (!empty($pub['year'])) {
-            $output .= '<span class="year">(' . esc_html($pub['year']) . ')</span> ';
+
+        $meta_parts = array();
+        if ($show_year && !empty($pub['year'])) {
+            $meta_parts[] = sprintf(
+                '<span class="wp-block-orcid-publications__year">(%s)</span>',
+                esc_html($pub['year'])
+            );
         }
-        if (!empty($pub['type'])) {
-            $output .= '<span class="type">' . esc_html($pub['type']) . '</span>';
+        if ($show_type && !empty($pub['type'])) {
+            $meta_parts[] = sprintf(
+                '<span class="wp-block-orcid-publications__type">%s</span>',
+                esc_html($pub['type'])
+            );
         }
-        $output .= '</p>';
+        
+        if (!empty($meta_parts)) {
+            $output .= '<div class="wp-block-orcid-publications__meta">';
+            $output .= implode(' ', $meta_parts);
+            $output .= '</div>';
+        }
+        
         $output .= '</div>';
     }
     

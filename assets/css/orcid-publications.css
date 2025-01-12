@@ -1,16 +1,51 @@
-.orcid-publications {
+.wp-block-orcid-publications {
   margin: 20px 0;
+  font-size: var(--publication-font-size, 16px);
 }
-.publication {
-  margin-bottom: 20px;
+
+.wp-block-orcid-publications__item {
+  margin-bottom: 1.5em;
 }
-.publication h3 {
-  margin-bottom: 5px;
+
+.wp-block-orcid-publications__title {
+  margin: 0 0 0.5em;
+  line-height: 1.4;
 }
-.publication .year {
-  color: #666;
+
+.wp-block-orcid-publications__meta {
+  font-size: 0.9em;
+  line-height: 1.4;
 }
-.publication .type {
-  color: #888;
+
+.wp-block-orcid-publications__year {
+  color: var(--wp--preset--color--secondary, #666);
+}
+
+.wp-block-orcid-publications__type {
+  color: var(--wp--preset--color--tertiary, #888);
   font-style: italic;
+}
+
+/* Grid Layout */
+.wp-block-orcid-publications.is-layout-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2em;
+}
+
+/* Compact Layout */
+.wp-block-orcid-publications.is-layout-compact
+  .wp-block-orcid-publications__item {
+  margin-bottom: 0.75em;
+}
+
+.wp-block-orcid-publications.is-layout-compact
+  .wp-block-orcid-publications__title {
+  font-size: 1em;
+  margin-bottom: 0.25em;
+}
+
+.wp-block-orcid-publications.is-layout-compact
+  .wp-block-orcid-publications__meta {
+  font-size: 0.8em;
 }
