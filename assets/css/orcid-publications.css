@@ -1,0 +1,16 @@
+.orcid-publications {
+  margin: 20px 0;
+}
+.publication {
+  margin-bottom: 20px;
+}
+.publication h3 {
+  margin-bottom: 5px;
+}
+.publication .year {
+  color: #666;
+}
+.publication .type {
+  color: #888;
+  font-style: italic;
+}
